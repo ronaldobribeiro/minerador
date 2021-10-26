@@ -65,7 +65,13 @@ for(n in aux:qtd+1){
 aux<-2
 tryCatch({
   for(p in 1:1000){
+    tryCatch({
     remDr$navigate(linkGeral[[aux]])
+    }, error = function(cond){
+      print('não ha mais links')
+      
+    })
+    Sys.sleep(7)
     
     nomeProduto<-remDr$findElements('class name', paste0('MuiTypography-alignLeft'))
     nomeProduto<-nomeProduto[[1]]$getElementText() 
