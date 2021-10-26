@@ -170,7 +170,6 @@ tryCatch({
 }, 
 error = function(cond){
   print('Mineração finalizada')
-  print(cond)
 })
 
 
