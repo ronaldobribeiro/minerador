@@ -25,7 +25,16 @@ Cliente = 'NATURA'
 rD<-rsDriver(port = 4444L, browser = c('chrome'),chromever = '94.0.4606.61',verbose = TRUE, check = TRUE) #Codigo que iremos passar o parametros para configurar o servidor
 remDr<-rD[['client']] #Lista gerada, que é tipica de um cliente mexer no navegador
 remDr$maxWindowSize()
-remDr$navigate('https://www.natura.com.br/c/tudo-em-corpo-e-banho') #Navigate é uma função, para abrir o site
+
+
+sites<-c('https://www.natura.com.br/c/tudo-em-perfumaria','https://www.natura.com.br/c/tudo-em-corpo-e-banho',
+         'https://www.natura.com.br/c/tudo-em-cabelos','https://www.natura.com.br/c/tudo-em-rosto')
+
+
+minerando<-1
+
+for (n in 1:5){
+remDr$navigate(sites[[minerando]]) #Navigate é uma função, para abrir o site
 Sys.sleep(5)
 
 #ABRINDO TODAS AS PAGINAS EXISTENTES
@@ -172,6 +181,9 @@ error = function(cond){
   print('Mineração finalizada')
 })
 
+minerando<-minerando+1
+
+}
 
 remDr$close() #Fecho o navegador
 rD$server$stop() #Fecha conexão realizada com servidor 
