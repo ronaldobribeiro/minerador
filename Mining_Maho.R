@@ -51,6 +51,8 @@ aux<-3
 tryCatch({
 for (p in 1:qtd){
 remDr$navigate(linkGeral[[aux]])
+  
+  Sys.sleep(3)
 
 tryCatch({
 nomeProduto<-remDr$findElements('class name', 'product__info--name')
@@ -60,9 +62,13 @@ error = function(cond){
   print(cond)
 })
 
+tryCatch({
 linhaProduto<-remDr$findElements('class name','last')
 linhaProduto<-linhaProduto[[1]]$getElementText()
-print(linhaProduto)
+print(linhaProduto)},
+error = function(cond){
+  print(cond)
+})
 
 volumeProduto<-nomeProduto
 substrRight <- function(x, n){
@@ -71,33 +77,50 @@ substrRight <- function(x, n){
 volumeProduto<-substrRight(volumeProduto,7)
 print(volumeProduto)
 
-
+tryCatch({
 precoProduto<-remDr$findElements('class name', 'skuBestPrice')
 precoProduto<-precoProduto[[1]]$getElementText()
-print(precoProduto)
+},
+error = function(cond){
+  print(cond)
+})
 
+tryCatch({
 codProduto<-remDr$findElements('class name','skuReference')
 codProduto<-codProduto[[1]]$getElementText()
-print(codProduto)
+print(codProduto)},
+error = function(cond){
+  print(cond)
+})
 
+tryCatch({
 listaImagem <-remDr$findElements('tag name', 'img')
 urlImagem<-listaImagem[[1]]$getElementAttribute('src')
 urlImagem<-urlImagem[[1]]
-print(urlImagem)
+print(urlImagem)},
+error = function(cond){
+  print(cond)
+})
 
 
 siteUrl<-linkGeral[[aux]]
 print(siteUrl)
 aux<-aux+1
 
+if(length(precoProduto)==0){
+  precoProduto<-"Produto Indisponível"
+  print(precoProduto)
+}else{
+  print(precoProduto)
+}
+
+
 dataMineracao<-Sys.Date()
 tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
-
-Sys.sleep(4)
 }
   },
   error = function(cond){
-    print('Mineração finalizada')
+    print(cond)
   })
 
 remDr$close() #Fecho o navegador
