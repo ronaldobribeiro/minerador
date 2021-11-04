@@ -32,6 +32,8 @@ remDr$maxWindowSize()
 
 minerador=1
 
+
+
 for (n in 1:6){
 #paginas para minerar
 pagina<-c('https://www.hinode.com.br/cabelo','https://www.hinode.com.br/corpo-e-banho','https://www.hinode.com.br/fragrancias', 
@@ -41,6 +43,7 @@ linha<-c('CABELOS', 'CORPO & BANHO','FRAGRANCIAS', 'MAQUIAGENS', 'NUTRICAO E PER
 
 
 remDr$navigate(pagina[[minerador]])#ABRINDO SITE PARA MINERAR 
+
 
 
 
@@ -65,7 +68,6 @@ Sys.sleep(3)
 
 #PEGADO TODOS OS LINKS DOS PRODUTOS
 linkProduto<-remDr$findElements('class','vtex-product-summary-2-x-clearLink')
-
 aux<-1
 qtd<-length(linkProduto)
 for (c in aux:qtd+1){
@@ -75,92 +77,147 @@ aux=aux+1
 print(linkGeral)
 }
 
+
+
+
 pg<-3
 qtd<-length(linkGeral)
 
-tryCatch({
-for(p in 1:qtd+1){
-remDr$navigate(linkGeral[[pg]])
 
 tryCatch({
-nomeProduto<-remDr$findElements('class name','vtex-store-components-3-x-productBrand--quickview')
-nomeProduto<-nomeProduto[[1]]$getElementText()
-print(nomeProduto)},
-error=function(cond){
-  print(cond)
-})
-
-tryCatch({
-precoProduto<-remDr$findElements('class name','vtex-product-price-1-x-sellingPriceValue')
-precoProduto<-precoProduto[[1]]$getElementText()
-print(precoProduto)},
-error = function(cond){
-  print(cond)
-})
-
-
-tryCatch({
-codProduto<-remDr$findElements('class name','vtex-refid')
-codProduto<-codProduto[[1]]$getElementText()
-codProduto<-substr(codProduto,6,30)
-print(codProduto)},
-error = function(cond){
-  print(cond)
-})
-
-
-linhaProduto<-ifelse(minerador==1,linha[[1]],
-                     ifelse(minerador==2, linha[[2]],
-                     ifelse(minerador==3, linha[[3]],
-                     ifelse(minerador==4, linha[[4]],linha[[5]]))))
-print(linhaProduto)
-
-tryCatch({
-volumeProduto<-nomeProduto
-substrRight <- function(x, n){
-  substr(x, nchar(x)-n+1, nchar(x))
-}
-volumeProduto<-substrRight(volumeProduto,6)
-print(volumeProduto)},
-error = function(cond){
-  print(cond)
-})
-
-tryCatch({
-listaImagem<-remDr$findElements('class name','vtex-store-components-3-x-productImageTag')
-urlImagem<-listaImagem[[1]]$getElementAttribute('src')
-print(urlImagem)},
-error = function(cond){
-  print(cond)
-})
-
-siteUrl<-linkGeral[[pg]]
-print(siteUrl)
-
-pg<-pg+1
-
-
-dataMineracao<-Sys.Date()
-
-#REMOVER ACENTOS 
-nomeProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',nomeProduto)
-#REMOVER APOSTROFO
-nomeProduto<-str_replace_all(nomeProduto,"[']"," ")
-
-#CRIANDO TABELA DE DADOS 
-tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
-Sys.sleep(4)
+for (x in 1:qtd+1){
+  remDr$navigate(linkGeral[[pg]])
+  
+  if(
+    length(tryCatch({
+      remDr$findElements('class name','vtex-rich-text-0-x-strong')},
+      error=function(cond){
+        print(cond)
+      }))>0){
+    
+    tryCatch({
+      dataMineracao<-Sys.Date()
+      nomeProduto<-"PRODUTO INDISPONIVEL"
+      print(nomeProduto)
+      volumeProduto<-"0"
+      print(volumeProduto)
+      precoProduto<-"PRODUTO INDISPONIVEL"
+      print(precoProduto)
+      codProduto<-"PRODUTO INDISPONIVEL"
+      print(codProduto)
+      linhaProduto<-ifelse(minerador==1,linha[[1]],
+                           ifelse(minerador==2, linha[[2]],
+                                  ifelse(minerador==3, linha[[3]],
+                                         ifelse(minerador==4, linha[[4]],linha[[5]]))))
+      print(linhaProduto)
+      urlImagem<-'PRODUTO INDISPONIVEL'
+      siteUrl<-linkGeral[[pg]]
+      print(siteUrl)
+      
+      pg<-pg+1
+      
+      Sys.sleep(4)},
+      error = function(cond){
+        print(cond)
+      })
+    
+    
+  }else{
+    tryCatch({
+      tryCatch({
+        nomeProduto<-remDr$findElements('class name','vtex-store-components-3-x-productBrand--quickview')
+        nomeProduto<-nomeProduto[[1]]$getElementText()
+        print(nomeProduto)},
+        error=function(cond){
+          print(cond)
+        })
+      
+      tryCatch({
+        precoProduto<-remDr$findElements('class name','vtex-product-price-1-x-sellingPriceValue')
+        precoProduto<-precoProduto[[1]]$getElementText()
+        print(precoProduto)},
+        error = function(cond){
+          print(cond)
+        })
+      
+      
+      tryCatch({
+        codProduto<-remDr$findElements('class name','vtex-refid')
+        codProduto<-codProduto[[1]]$getElementText()
+        codProduto<-substr(codProduto,6,30)
+        print(codProduto)},
+        error = function(cond){
+          print(cond)
+        })
+      
+      
+      linhaProduto<-ifelse(minerador==1,linha[[1]],
+                           ifelse(minerador==2, linha[[2]],
+                                  ifelse(minerador==3, linha[[3]],
+                                         ifelse(minerador==4, linha[[4]],linha[[5]]))))
+      print(linhaProduto)
+      
+      tryCatch({
+        volumeProduto<-nomeProduto
+        substrRight <- function(x, n){
+          substr(x, nchar(x)-n+1, nchar(x))
+        }
+        volumeProduto<-substrRight(volumeProduto,6)
+        print(volumeProduto)},
+        error = function(cond){
+          print(cond)
+        })
+      
+      tryCatch({
+        listaImagem<-remDr$findElements('class name','vtex-store-components-3-x-productImageTag')
+        urlImagem<-listaImagem[[1]]$getElementAttribute('src')
+        print(urlImagem)},
+        error = function(cond){
+          print(cond)
+        })
+      
+      siteUrl<-linkGeral[[pg]]
+      print(siteUrl)
+      
+      pg<-pg+1
+      
+      if(length(precoProduto)==0){
+        precoProduto<-"Produto Indisponível"
+        print(precoProduto)
+      }else{
+        print(precoProduto)
+      }
+      
+      
+      dataMineracao<-Sys.Date()
+      
+      #REMOVER ACENTOS 
+      nomeProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',nomeProduto)
+      #REMOVER APOSTROFO
+      nomeProduto<-str_replace_all(nomeProduto,"[']"," ")
+    
+      
+      #CRIANDO TABELA DE DADOS 
+      tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
+      
+      Sys.sleep(4)
+    },
+    error=function(cond){
+      print(cond)
+    })
+    
+  }
 }
   },
-  error=function(cond){
-    print(cond)
+  error =function(cond){
+    print("Pagina finaliza,dando continuidade as minerações")
   })
+
+
+
 
 minerador<-minerador+1
 }
-
-
-
 
 remDr$close() #Fecho o navegador
 rD$server$stop() #Fecha conexão realizada com servidor 
