@@ -25,7 +25,10 @@ tabelaDados<-data.frame(dataMineracao = as.Date(character()),
 
 Cliente = 'BIOAGE'
 #ABRINDO NAVEGADOR 
-rD<-rsDriver(port = 4444L, browser = c('chrome'),chromever = '94.0.4606.61',verbose = TRUE, check = TRUE) #Codigo que iremos passar o parametros para configurar o servidor
+eCaps <- list(chromeOptions = list(
+  args = c('--headless', '--disable-gpu', '--window-size=1280,800')
+))
+rD<-rsDriver(port = 4444L, browser = c('chrome'),chromever = '94.0.4606.61',verbose = TRUE, check = TRUE, extraCapabilities=eCaps) #Codigo que iremos passar o parametros para configurar o servidor
 remDr<-rD[['client']] #Lista gerada, que é tipica de um cliente mexer no navegador
 remDr$maxWindowSize()
 
@@ -96,7 +99,8 @@ Sys.sleep(2)
 #INICIANDO MINERAÇÃO DE DADOS
 tt<-1
 qtd<-length(linkGeral)
-for(x in tt:qtd-1){
+qtd<-qtd-1
+for(x in tt:qtd){
   remDr$navigate(linkGeral[[tt]])
   
   nomeProduto<-remDr$findElements('xpath','/html/body/div[1]/div/div[8]/div[2]/div[1]/div[1]/div[2]/h1')
