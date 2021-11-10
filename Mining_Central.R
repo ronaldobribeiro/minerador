@@ -97,6 +97,8 @@ for (c in 1:qtd){
     volumeProduto<-0
   }
   
+  
+  if(length(remDr$findElements('class name','referencia'))>0){
   codProduto<-remDr$findElements('class name','referencia')
   codProduto<-codProduto[[1]]$getElementText()
   substrLeft <- function(x, n){
@@ -105,6 +107,9 @@ for (c in 1:qtd){
   
   codProduto<-substrLeft(codProduto,6)
   print(codProduto)
+  } else {
+    codProduto<-0
+  }
   
   linhaProduto<-remDr$findElements('class name','ativo')
   linhaProduto<-linhaProduto[[2]]$getElementText()
