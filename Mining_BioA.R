@@ -158,6 +158,16 @@ for(x in tt:qtd){
   
   
   dataMineracao<-Sys.Date()
+  
+  #REMOVER ACENTOS 
+  nomeProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',nomeProduto)
+  linhaProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',linhaProduto)
+  #REMOVER APOSTROFO
+  nomeProduto<-str_replace_all(nomeProduto,"[']"," ")
+  linhaProduto<-str_replace_all(linhaProduto,"[']"," ")
+  
+  
+  
   tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
   
   tt<-tt+1
