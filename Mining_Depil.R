@@ -23,7 +23,7 @@ tabelaDados<-data.frame(dataMineracao = as.Date(character()),
                         urlImagem = as.character(character()),
                         siteUrl = as.character(character()))
 
-Cliente = 'BIOAGE'
+Cliente = 'DEPIL-BELA'
 #ABRINDO NAVEGADOR 
 #eCaps <- list(chromeOptions = list(
 #  args = c('--headless', '--disable-gpu', '--window-size=1280,800')
@@ -125,15 +125,22 @@ tt<-1
 lista<-c(sprintf('https://loja.grupobioclean.com.br/depil-homme?loja=483674&categoria=29&pg=%s',tt))
 remDr$navigate(lista[[tt]])
 
-
+tryCatch({
 fim<-remDr$findElements('xpath','/html/body/main/div/section/div/div[1]/div[2]/span[6]/a')
-fim<-fim[[1]]$getElementAttribute('href')
+fim<-fim[[1]]$getElementAttribute('href')},error=function(cond){
+  print('sem paginas')
+})
 substrRight <- function(x, n){
   substr(x, nchar(x)-n+1, nchar(x))
 }
 
 fim<-substrRight(fim,1)
-fim
+
+if(length(fim)==0){
+  fim=1
+}else{
+  fim = fim
+}
 
 
 tt<-1
@@ -162,13 +169,71 @@ for (i in tt:fim){
 }
 
 
+################################### MINERANDO OS DADOS ###################################
+##########################################################################################
 
+p<-1
+qtd<-length(linkGeral)
+qtd<-qtd-1
 
+for(x in p:qtd){
+  remDr$navigate(linkGeral[[p]])
+  Sys.sleep(2)
+  
+  
+  nomeProduto<-remDr$findElements('class name','hidden-sm')
+  nomeProduto<-nomeProduto[[1]]$getElementText()
+  print(nomeProduto)
 
+  precoProduto<-remDr$findElements('id','variacaoPreco')  
+  precoProduto<-precoProduto[[1]]$getElementText()
+  print(precoProduto)
+  
+  linhaProduto<-remDr$findElements('class name','dados-valor')
+  linhaProduto<-linhaProduto[[1]]$getElementText()
+  print(linhaProduto)
+  
+  codProduto<-remDr$findElements('class name','dados-valor')
+  codProduto<-codProduto[[2]]$getElementText()
+  print(codProduto)
+  
+  tryCatch({
+    volumeProduto<-nomeProduto
+    substrRight <- function(x, n){
+      substr(x, nchar(x)-n+1, nchar(x))
+    }
+    volumeProduto<-substrRight(volumeProduto,16)
+    print(volumeProduto)},
+    error = function(cond){
+      print(cond)
+    })
+  
+  tryCatch({
+    listaImagem<-remDr$findElements('class name','cloud-zoom')
+    urlImagem<-listaImagem[[1]]$getElementAttribute('href')
+    print(urlImagem)},
+    error = function(cond){
+      print(cond)
+    })
+  
+  siteUrl<-linkGeral[[p]]
+  print(siteUrl)
 
-
-
-
+  p<-p+1
+  
+  #CRIANDO TABELAS DE DADOS
+  dataMineracao<-Sys.Date()
+  
+  #REMOVER ACENTOS 
+  nomeProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',nomeProduto)
+  linhaProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',linhaProduto)
+  #REMOVER APOSTROFO
+  nomeProduto<-str_replace_all(nomeProduto,"[']"," ")
+  linhaProduto<-str_replace_all(linhaProduto,"[']"," ")
+  
+  tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
+  
+  }
 
 
 
