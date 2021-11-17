@@ -63,11 +63,13 @@ for (i in aux:qtd){
 
 
 #coletando dados
-pg<-25
+pg<-2
 qtd<-length(linkGeral)
+tryCatch({
 for(d in pg:qtd){
   remDr$navigate(linkGeral[[pg]])
-  
+  Sys.sleep(2)
+  if(str_count(linkGeral[[pg]], pattern = '/')>6){
   print(nomeProduto<-remDr$findElements('class name','titulo')[[1]]$getElementText())
   print(linhaProduto<-remDr$findElements('class name','label__categoria')[[1]]$getElementText())
   print(precoProduto<-0)
@@ -92,7 +94,14 @@ for(d in pg:qtd){
   tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
   
   pg<-pg+1
+  }else{
+    print('pagina ignorada')
+    pg<-pg+1
+  }
 }
+},error=function(cond){
+  print('Mineração finalizada')
+})
 
 #FINALIZANDO MINERACAO, FECHANDO PAGINA WEB
 remDr$close() #Fecho o navegador
@@ -100,3 +109,8 @@ rD$server$stop() #Fecha conexão realizada com servidor
 system("taskkill /im java.exe /f", intern=FALSE, ignore.stdout=FALSE) #Forçando o R a fechar todas as portas Java (se necessário)
 rm(rD, remDr) # excluindo os dados no final 
 gc() #limpeza de disco
+
+
+
+
+
