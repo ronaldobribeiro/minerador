@@ -130,7 +130,29 @@ for(n in 1:qt){
     '-'
   }
   print(linhaProduto)
+  #CRIANDO FUNÇÃO 
+  substrRight <- function(x, n){
+    substr(x, nchar(x)-n+1, nchar(x))
+  }
   
+  #PEGANDO 
+  cont<-1
+  tryCatch({
+  for (m in 1:100){
+    if(str_detect(remDr$findElements('xpath',paste0('//*[@id="single-product"]/div[2]/p[',cont,']'))[[1]]$getElementText(), pattern = 'Código')==TRUE){
+      codProduto<-remDr$findElements('xpath',paste0('//*[@id="single-product"]/div[2]/p[',cont,']'))[[1]]$getElementText()
+      codProduto<-substrRight(codProduto,7)
+      print(codProduto)
+      cont<-100
+    }else{
+      cont<-cont+1
+      codProduto<-'-'
+    }
+  }
+    },error=function(cond){
+  })
+    
+
   #CRIANDO TABELAS DE DADOS
   dataMineracao<-Sys.Date()
   
