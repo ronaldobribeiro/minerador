@@ -102,7 +102,47 @@ for(n in 1:qt){
       print(cond)
     })
   
-
+  linhaProduto<-if(str_detect(nomeProduto, pattern = 'Phytoderm')==TRUE){
+    'Phytoderm'
+  }else if(str_detect(nomeProduto, pattern = 'OX') || str_detect(nomeProduto, pattern = 'Ox')==TRUE){
+    'OX'
+  }else if(str_detect(nomeProduto, pattern = 'No Inset')==TRUE){
+    'No inset'
+  }else if(str_detect(nomeProduto, pattern = 'Neutrox')==TRUE){
+    'Neutrox'
+  }else if(str_detect(nomeProduto, pattern = 'Minuano')==TRUE){
+    'Minuano'
+  }else if(str_detect(nomeProduto, pattern = 'Mat Inset')==TRUE){
+    'Mat Inset'
+  }else if(str_detect(nomeProduto, pattern = 'Kolene')==TRUE){
+    'Kolene'
+  }else if(str_detect(nomeProduto, pattern = 'Karina')==TRUE){
+    'Karina'
+  }else if(str_detect(nomeProduto, pattern = 'Francis')==TRUE){
+    'Francis'
+  }else if(str_detect(nomeProduto, pattern = 'Brisa')==TRUE){
+    'Brisa'
+  }else if(str_detect(nomeProduto, pattern = 'Assim')==TRUE){
+    'Assim'
+  }else if(str_detect(nomeProduto, pattern = 'Albany')==TRUE){
+    'Albany'
+  }else{
+    '-'
+  }
+  print(linhaProduto)
+  
+  #CRIANDO TABELAS DE DADOS
+  dataMineracao<-Sys.Date()
+  
+  #REMOVER ACENTOS 
+  nomeProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',nomeProduto)
+  linhaProduto<-chartr('áéíóÁÉÍÓÂÊÎÔâêîôãõÃÕçÇÀà','aeioAEIOAEIOaeioaoAOcCAa',linhaProduto)
+  #REMOVER APOSTROFO
+  nomeProduto<-str_replace_all(nomeProduto,"[']"," ")
+  linhaProduto<-str_replace_all(linhaProduto,"[']"," ")
+  
+  tabelaDados<-rbind(tabelaDados, cbind(dataMineracao, Cliente, nomeProduto,linhaProduto, volumeProduto,precoProduto, codProduto, urlImagem, siteUrl))
+  
 
   pg<-pg+1
 }
